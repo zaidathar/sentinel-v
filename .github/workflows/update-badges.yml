@@ -32,8 +32,23 @@ jobs:
       run: |
         uv sync
     
+    - name: Create test environment file
+      run: |
+        cat > .env << EOF
+        COGNITO_REGION=us-east-1
+        COGNITO_USER_POOL_ID=us-east-1_TESTPOOL
+        COGNITO_APP_CLIENT_ID=test-client-id
+        JWKS_CACHE_TTL=300
+        LOG_LEVEL=WARNING
+        TESTING_MODE=true
+        EOF
+    
     - name: Calculate coverage
       id: coverage
+      env:
+        COGNITO_REGION: us-east-1
+        COGNITO_USER_POOL_ID: us-east-1_TESTPOOL
+        COGNITO_APP_CLIENT_ID: test-client-id
       run: |
         COVERAGE=$(uv run pytest --cov=app --cov-report=term | grep "TOTAL" | awk '{print $4}' | sed 's/%//')
         echo "coverage=$COVERAGE" >> $GITHUB_OUTPUT
@@ -49,6 +64,10 @@ jobs:
     
     - name: Count tests
       id: tests
+      env:
+        COGNITO_REGION: us-east-1
+        COGNITO_USER_POOL_ID: us-east-1_TESTPOOL
+        COGNITO_APP_CLIENT_ID: test-client-id
       run: |
         TEST_COUNT=$(uv run pytest --collect-only -q | tail -1 | awk '{print $1}')
         echo "count=$TEST_COUNT" >> $GITHUB_OUTPUT

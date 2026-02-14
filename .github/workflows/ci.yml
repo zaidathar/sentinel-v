@@ -27,7 +27,25 @@ jobs:
       run: |
         uv sync
     
+    - name: Create test environment file
+      run: |
+        cat > .env << EOF
+        COGNITO_REGION=us-east-1
+        COGNITO_USER_POOL_ID=us-east-1_TESTPOOL
+        COGNITO_APP_CLIENT_ID=test-client-id
+        JWKS_CACHE_TTL=300
+        LOG_LEVEL=WARNING
+        TESTING_MODE=true
+        EOF
+    
     - name: Run tests with coverage
+      env:
+        COGNITO_REGION: us-east-1
+        COGNITO_USER_POOL_ID: us-east-1_TESTPOOL
+        COGNITO_APP_CLIENT_ID: test-client-id
+        JWKS_CACHE_TTL: 300
+        LOG_LEVEL: WARNING
+        TESTING_MODE: true
       run: |
         uv run pytest --cov=app --cov-report=xml --cov-report=term -v
     
