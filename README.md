@@ -1,9 +1,11 @@
 # Sentinel-V: Serverless Video Processing Pipeline
 
-[![Coverage](https://img.shields.io/badge/coverage-89%25-brightgreen.svg)](./htmlcov/index.html)
+![CI](https://github.com/zaidathar/sentinel-v/actions/workflows/ci.yml/badge.svg)
+[![Coverage](https://img.shields.io/badge/coverage-89%25-brightgreen.svg)]()
 [![Tests](https://img.shields.io/badge/tests-35%20passing-brightgreen.svg)]()
 [![Python](https://img.shields.io/badge/python-3.13%2B-blue.svg)]()
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.129%2B-009688.svg)]()
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)]()
 
 Production-grade serverless video processing pipeline with AWS Cognito authentication, designed for AWS Lambda deployment.
 
@@ -410,6 +412,73 @@ The test suite includes:
 - Malformed token handling
 
 ## 🚢 Deployment
+
+### Docker Deployment
+
+#### Build and Run Locally
+
+```bash
+# Build Docker image
+docker build -t sentinel-v:latest .
+
+# Run container
+docker run -p 8000:8000 \
+  -e COGNITO_REGION=us-east-1 \
+  -e COGNITO_USER_POOL_ID=us-east-1_XXXXXXXXX \
+  -e COGNITO_APP_CLIENT_ID=your-client-id \
+  sentinel-v:latest
+
+# Or use docker-compose
+docker-compose up -d
+```
+
+#### Docker Image Details
+
+- Base: `python:3.13-slim`
+- Package  Manager: `uv`
+- Size: ~200MB (optimized)
+- Health check: `/api/v1/health`
+- Exposed port: 8000
+
+### CI/CD Pipeline
+
+The project includes GitHub Actions workflows for automated testing and deployment:
+
+#### CI Workflow (`.github/workflows/ci.yml`)
+
+Triggers on push to `main`/`develop` branches and pull requests:
+
+1. **Test Job**:
+   - Runs full test suite with coverage
+   - Uploads coverage to Codecov
+   - Updates README badges automatically
+   
+2. **Lint Job**:
+   - Code formatting check (black)
+   - Type checking (mypy)
+   
+3. **Docker Job**:
+   - Builds Docker image
+   - Tests image functionality
+
+#### Badge Updates (`.github/workflows/update-badges.yml`)
+
+Automatically updates README badges after successful CI runs:
+- Coverage percentage with color coding
+- Test count
+- Commits changes back to main branch
+
+#### Setting Up CI/CD
+
+1. **Enable GitHub Actions** in your repository
+2. **Set repository secrets** (if using Codecov):
+   ```
+   CODECOV_TOKEN=your-codecov-token
+   ```
+3. **Update badge URLs** in README.md:
+   ```markdown
+   ![CI](https://github.com/YOUR-USERNAME/sentinel-v/actions/workflows/ci.yml/badge.svg)
+   ```
 
 ### AWS Lambda Deployment
 
