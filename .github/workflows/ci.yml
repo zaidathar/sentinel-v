@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main, develop ]
 
+permissions:
+  contents: write
+
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -27,7 +31,25 @@ jobs:
       run: |
         uv sync
     
+    - name: Create test environment file
+      run: |
+        cat > .env << EOF
+        COGNITO_REGION=us-east-1
+        COGNITO_USER_POOL_ID=us-east-1_TESTPOOL
+        COGNITO_APP_CLIENT_ID=test-client-id
+        JWKS_CACHE_TTL=300
+        LOG_LEVEL=WARNING
+        TESTING_MODE=true
+        EOF
+    
     - name: Run tests with coverage
+      env:
+        COGNITO_REGION: us-east-1
+        COGNITO_USER_POOL_ID: us-east-1_TESTPOOL
+        COGNITO_APP_CLIENT_ID: test-client-id
+        JWKS_CACHE_TTL: 300
+        LOG_LEVEL: WARNING
+        TESTING_MODE: true
       run: |
         uv run pytest --cov=app --cov-report=xml --cov-report=term -v
     
@@ -117,4 +139,9 @@ jobs:
     
     - name: Test Docker image
       run: |
-        docker run --rm sentinel-v:latest python -c "from app.main import app; print('Docker image OK')"
+        docker run --rm \
+          -e COGNITO_REGION=us-east-1 \
+          -e COGNITO_USER_POOL_ID=us-east-1_TESTPOOL \
+          -e COGNITO_APP_CLIENT_ID=test-client-id \
+          sentinel-v:latest python -c "from app.main import app; print('Docker image OK')"
+

@@ -56,5 +56,4 @@ coverage.xml
 Thumbs.db
 
 # Project specific
-uv.lock
 .python-version
