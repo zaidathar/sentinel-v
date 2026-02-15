@@ -22,9 +22,9 @@ htmlcov/
 .vscode/
 .idea/
 
-README.md
+
 tests/
-*.md
+
 
 .venv/
 venv/
