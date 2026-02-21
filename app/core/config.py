@@ -23,6 +23,20 @@ class Settings(BaseSettings):
         ...,
         description="AWS Cognito App Client ID for JWT audience validation"
     )
+    COGNITO_DOMAIN: str = Field(
+        default="",
+        description="AWS Cognito Domain (e.g., your-domain.auth.us-east-1.amazoncognito.com)"
+    )
+    COGNITO_REDIRECT_URI: str = Field(
+        default="",
+        description="OAuth2 callback URL"
+    )
+
+    COGNITO_CLIENT_SECRET: Optional[str] = Field(
+        None,
+        description="AWS Cognito App Client Secret (if applicable)"
+    )
+
     
     JWKS_CACHE_TTL: int = Field(
         default=300,
