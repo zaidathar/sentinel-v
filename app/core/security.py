@@ -7,6 +7,9 @@ from jose import jwt, JWTError
 from jose.backends import RSAKey
 from pydantic import BaseModel, Field
 import structlog
+import secrets
+import hashlib
+import base64
 
 from app.core.config import settings
 from app.core.jwks import jwks_client
@@ -19,6 +22,28 @@ from app.core.exceptions import (
 logger = structlog.get_logger(__name__)
 
 security = HTTPBearer()
+
+
+def generate_state() -> str:
+    """Generate a random state string for CSRF protection."""
+    return secrets.token_urlsafe(32)
+
+
+def generate_pkce_pair():
+    """
+    Generate a PKCE code_verifier and code_challenge.
+    
+    Returns:
+        tuple: (code_verifier, code_challenge)
+    """
+    # code_verifier: high-entropy cryptographic random string
+    code_verifier = secrets.token_urlsafe(64)
+    
+    # code_challenge = base64url(sha256(code_verifier))
+    sha256_hash = hashlib.sha256(code_verifier.encode('utf-8')).digest()
+    code_challenge = base64.urlsafe_b64encode(sha256_hash).decode('utf-8').rstrip('=')
+    
+    return code_verifier, code_challenge
 
 
 class CognitoUser(BaseModel):
