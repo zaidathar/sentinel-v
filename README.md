@@ -1,7 +1,7 @@
 # Sentinel-V: Serverless Video Processing Pipeline
 
 ![CI](https://github.com/zaidathar/sentinel-v/actions/workflows/ci.yml/badge.svg)
-[![Coverage](https://img.shields.io/badge/coverage-89%25-brightgreen.svg)]()
+[![Coverage](https://img.shields.io/badge/coverage-88%25-brightgreen.svg)]()
 [![Tests](https://img.shields.io/badge/tests-35%20passing-brightgreen.svg)]()
 [![Python](https://img.shields.io/badge/python-3.13%2B-blue.svg)]()
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.129%2B-009688.svg)]()
