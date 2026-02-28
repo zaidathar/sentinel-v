@@ -72,8 +72,6 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                 sub=user.sub
             )
             
-            return await call_next(request)
-            
         except TokenExpiredError as e:
             logger.warning("auth_middleware_token_expired", path=path, error=str(e))
             return JSONResponse(
@@ -104,3 +102,5 @@ class AuthenticationMiddleware(BaseHTTPMiddleware):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 content={"detail": "Internal server error"},
             )
+
+        return await call_next(request)

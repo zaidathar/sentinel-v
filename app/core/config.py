@@ -53,6 +53,40 @@ class Settings(BaseSettings):
         description="Enable testing mode (allows mock tokens)"
     )
     
+    # S3 Configuration
+    AWS_ACCESS_KEY_ID: Optional[str] = Field(
+        default=None,
+        description="AWS Access Key ID for S3"
+    )
+    AWS_SECRET_ACCESS_KEY: Optional[str] = Field(
+        default=None,
+        description="AWS Secret Access Key for S3"
+    )
+    S3_BUCKET_NAME: str = Field(
+        default="",
+        description="S3 bucket name for video storage"
+    )
+    S3_REGION: Optional[str] = Field(
+        default=None,
+        description="S3 bucket region (defaults to COGNITO_REGION)"
+    )
+    S3_UPLOAD_EXPIRATION: int = Field(
+        default=3600,
+        description="Presigned upload URL expiration in seconds (default: 1 hour)"
+    )
+    S3_DOWNLOAD_EXPIRATION: int = Field(
+        default=3600,
+        description="Presigned download URL expiration in seconds (default: 1 hour)"
+    )
+    S3_MAX_FILE_SIZE: int = Field(
+        default=500_000_000,
+        description="Maximum upload file size in bytes (default: 500MB)"
+    )
+    S3_ALLOWED_CONTENT_TYPES: list[str] = Field(
+        default=["video/mp4", "video/quicktime", "video/x-msvideo", "video/webm"],
+        description="Allowed MIME types for uploads"
+    )
+    
     @computed_field  # type: ignore[misc]
     @property
     def COGNITO_JWKS_URL(self) -> str:

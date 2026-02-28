@@ -6,7 +6,12 @@ from app.core.exceptions import (
     AuthenticationError,
     TokenExpiredError,
     TokenInvalidError,
-    JWKSFetchError
+    JWKSFetchError,
+    S3Error,
+    S3UploadError,
+    S3DownloadError,
+    FileValidationError,
+    FileAccessDeniedError,
 )
 
 __all__ = [
@@ -17,4 +22,9 @@ __all__ = [
     "TokenExpiredError",
     "TokenInvalidError",
     "JWKSFetchError",
+    "S3Error",
+    "S3UploadError",
+    "S3DownloadError",
+    "FileValidationError",
+    "FileAccessDeniedError",
 ]
