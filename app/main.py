@@ -7,7 +7,13 @@ import structlog
 
 from app.core import logging as _  # noqa: F401
 from app.core.config import settings
-from app.core.exceptions import AuthenticationError, JWKSFetchError
+from app.core.exceptions import (
+    AuthenticationError,
+    JWKSFetchError,
+    FileAccessDeniedError,
+    FileValidationError,
+    S3Error,
+)
 from app.api.v1.api import api_router
 from app.middleware import AuthenticationMiddleware
 
@@ -62,6 +68,62 @@ async def jwks_fetch_error_handler(request: Request, exc: JWKSFetchError):
     return JSONResponse(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
         content={"detail": "Authentication service temporarily unavailable"},
+    )
+
+
+@app.exception_handler(FileAccessDeniedError)
+async def file_access_denied_handler(request: Request, exc: FileAccessDeniedError):
+    """Handle file access denied errors."""
+    logger.warning(
+        "file_access_denied",
+        path=request.url.path,
+        error=str(exc)
+    )
+    return JSONResponse(
+        status_code=status.HTTP_403_FORBIDDEN,
+        content={"detail": "Access denied"},
+    )
+
+
+@app.exception_handler(FileValidationError)
+async def file_validation_error_handler(request: Request, exc: FileValidationError):
+    """Handle file validation errors."""
+    logger.warning(
+        "file_validation_error",
+        path=request.url.path,
+        error=str(exc)
+    )
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"detail": str(exc)},
+    )
+
+
+@app.exception_handler(S3Error)
+async def s3_error_handler(request: Request, exc: S3Error):
+    """Handle S3 operation errors."""
+    logger.error(
+        "s3_error",
+        path=request.url.path,
+        error=str(exc)
+    )
+    return JSONResponse(
+        status_code=status.HTTP_502_BAD_GATEWAY,
+        content={"detail": "Storage service error"},
+    )
+
+
+@app.exception_handler(UnicodeDecodeError)
+async def unicode_decode_error_handler(request: Request, exc: UnicodeDecodeError):
+    """Handle invalid payload encoding errors."""
+    logger.warning(
+        "unicode_decode_error",
+        path=request.url.path,
+        error=str(exc)
+    )
+    return JSONResponse(
+        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        content={"detail": "Invalid encoding in payload, expected UTF-8"},
     )
 
 

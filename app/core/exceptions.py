@@ -18,3 +18,28 @@ class TokenInvalidError(AuthenticationError):
 class JWKSFetchError(AuthenticationError):
     """Raised when fetching JWKS keys from Cognito fails."""
     pass
+
+
+class S3Error(Exception):
+    """Base exception for S3-related errors."""
+    pass
+
+
+class S3UploadError(S3Error):
+    """Raised when S3 upload operations fail."""
+    pass
+
+
+class S3DownloadError(S3Error):
+    """Raised when S3 download operations fail."""
+    pass
+
+
+class FileValidationError(S3Error):
+    """Raised when file validation fails (size, type, etc.)."""
+    pass
+
+
+class FileAccessDeniedError(S3Error):
+    """Raised when a user tries to access another user's file."""
+    pass

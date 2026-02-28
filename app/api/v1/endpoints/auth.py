@@ -38,14 +38,13 @@ async def login():
     
     redirect_response = RedirectResponse(url=cognito_login_url)
     
-    # Store state and code_verifier in secure HttpOnly cookies
     redirect_response.set_cookie(
         key="auth_state",
         value=state,
         httponly=True,
         secure=not settings.TESTING_MODE,
         samesite="lax",
-        max_age=300  # 5 minutes
+        max_age=300 
     )
     redirect_response.set_cookie(
         key="code_verifier",
@@ -89,7 +88,6 @@ async def callback(
             detail="Missing code verifier"
         )
     
-    # Exchange code for tokens
     token_url = f"https://{settings.COGNITO_DOMAIN}/oauth2/token"
     data = {
         "grant_type": "authorization_code",
@@ -99,7 +97,6 @@ async def callback(
         "code_verifier": code_verifier
     }
     
-    # Include client secret if configured
     auth = None
     if settings.COGNITO_CLIENT_SECRET:
         auth = (settings.COGNITO_APP_CLIENT_ID, settings.COGNITO_CLIENT_SECRET)
@@ -128,7 +125,6 @@ async def callback(
         )
 
     
-    # Clear auth cookies
     response.delete_cookie("auth_state")
     response.delete_cookie("code_verifier")
     
